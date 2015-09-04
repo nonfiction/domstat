@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-set -e
-
 set -- $@
 TIMESTAMP=$(date "+%Y-%m-%d-%H:%M:%S")
 DOMAIN=$1
