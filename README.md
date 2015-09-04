@@ -1,4 +1,4 @@
-domstat - domain monitoring and statistics tool
+## domstat - domain monitoring and statistics tool
 
 Gathers whois data, DNS records and server status for given domain.
 
