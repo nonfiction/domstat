@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+
+set -e
+
+set -- $@
+TIMESTAMP=$(date "+%Y-%m-%d-%H:%M:%S")
+DOMAIN=$1
+DOMAIN_DIR="$(pwd)/$DOMAIN"
+DOMAIN_FILE="$DOMAIN_DIR/README.md"
+shift
+
+echo DOMSTAT: "$DOMAIN"
+DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+
+mkdir -p "$DOMAIN_DIR"
+cd "$DOMAIN_DIR"
+$DIR/domstat-whois   "$DOMAIN"
+$DIR/domstat-zone    "$DOMAIN"
+$DIR/domstat-records "$DOMAIN"
+$DIR/domstat-head    "$DOMAIN"
+
+if [ ! -f "$DOMAIN_FILE" ]; then
+  echo -e "$DOMAIN\n\n    Technical Contact:\n    Business Contact:\n    Hosting Provider:" > "$DOMAIN_FILE"
+  echo "Please review and update $DOMAIN_FILE"
+fi
+
+while (( "$#" )); do
+  URL="$1.$DOMAIN"
+  $DIR/domstat-records "$URL"
+  $DIR/domstat-head "$URL"
+  shift
+done

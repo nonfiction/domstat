@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+URL=$1
+echo DOMSTAT-HEAD: "$URL"
+mkdir -p head
+curl -Is "$URL" | grep -v '^Date' | grep -v '^Set-Cookie' | grep -v '^Expires' > "head/$URL"

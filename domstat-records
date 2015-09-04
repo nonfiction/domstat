@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+URL=$1
+echo DOMSTAT-RECORDS: "$URL"
+mkdir -p records
+echo 'A:     '$(dig +short -t A     $URL)     > records/"$URL"
+echo 'AAAA:  '$(dig +short -t AAAA  $URL)     > records/"$URL"
+echo 'CNAME: '$(dig +short -t CNAME $URL | sort) >> records/"$URL"
+MX=$(dig +short -t MX $URL | sort)
+echo 'MX:' >> records/"$URL"
+echo -n "$MX" >> records/"$URL"

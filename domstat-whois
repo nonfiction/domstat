@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+DOMAIN=$1
+mkdir -p whois
+# whois information with time-sensitive comments removed
+whois "$DOMAIN" | grep -v '>>>.*<<<' | grep -v '^%' > whois/"$DOMAIN"

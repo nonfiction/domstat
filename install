@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+if [ -z "$PREFIX" ]; then
+  PREFIX=/usr/local
+fi
+
+BINPATH="$PREFIX/bin"
+
+echo "Installing domstat to $BINPATH"
+cp ./domstat* "$BINPATH"

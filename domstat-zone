@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+URL=$1
+echo DOMSTAT-ZONE: "$URL"
+mkdir -p zone
+
+echo 'NS:' > "zone/$URL"
+dig +short NS "$URL" | sort >> "zone/$URL"
+echo 'SOA:' >> "zone/$URL"
+dig +short SOA "$URL" | sort >> "zone/$URL"
