@@ -3,8 +3,9 @@
 URL=$1
 
 for RECORD in NS SOA; do
-  OUT=$(dig +short -t $RECORD $URL | sort | sed "s/^/- /")
+  OUT=$(dig +short -t $RECORD $URL | sort)
   if [ -n "$OUT" ]; then
-    echo -e "**$RECORD:**\n\n$OUT\n"
+    OUT=$(echo -e "$OUT" | sed "s/^/- **$RECORD:** /")
+    echo "$OUT"
   fi
 done

@@ -1,35 +1,34 @@
 #!/usr/bin/env bash
 
-set -- $@
 DOMAIN=$1
 shift
+SUBDOMAINS="$@"
 
-echo -e "## DOMSTAT: $DOMAIN"
+echo "# $DOMAIN"
 DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
-# cd "$DOMAIN_DIR"
-# mkdir -p {head,records,whois,zone}
-
-echo -e "\n### WHOIS: $DOMAIN\n"
+echo -e "\n### WHOIS\n"
 $DIR/domstat-whois "$DOMAIN"
 
-echo -e "\n### ZONE: $DOMAIN\n"
-$DIR/domstat-zone "$DOMAIN"
+echo -e "\n### DNS Records\n"
 
-echo -e "\n### RECORDS: $DOMAIN\n"
+echo -e "\n$DOMAIN\n"
+$DIR/domstat-zone "$DOMAIN"
 $DIR/domstat-records "$DOMAIN"
 
-echo -e "\n### HEAD: $DOMAIN\n"
+for SUBDOMAIN in $SUBDOMAINS; do
+  URL="$SUBDOMAIN.$DOMAIN"
+  echo -e "\n$URL\n"
+  $DIR/domstat-records "$URL"
+done
+
+echo -e "\n### Headers\n"
+
+echo -e "$DOMAIN\n"
 $DIR/domstat-head "$DOMAIN"
 
-while (( "$#" )); do
-  URL="$1.$DOMAIN"
-
-  echo -e "\n### SUBDOMAIN-RECORDS: $URL\n"
-  $DIR/domstat-records "$URL"
-
-  echo -e "\n### SUBDOMAIN-HEAD: $URL\n"
+for SUBDOMAIN in $SUBDOMAINS; do
+  URL="$SUBDOMAIN.$DOMAIN"
+  echo -e "\n$URL\n"
   $DIR/domstat-head "$URL"
-
-  shift
 done
