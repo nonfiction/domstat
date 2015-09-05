@@ -10,13 +10,11 @@ DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
 echo -e "\n### DNS Records\n"
 
-echo -e "\n$DOMAIN\n"
 $DIR/domstat-zone "$DOMAIN"
 $DIR/domstat-records "$DOMAIN"
 
 for SUBDOMAIN in $SUBDOMAINS; do
   URL="$SUBDOMAIN.$DOMAIN"
-  echo -e "\n$URL\n"
   $DIR/domstat-records "$URL"
 done
 

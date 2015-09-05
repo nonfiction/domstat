@@ -5,7 +5,7 @@ URL=$1
 for RECORD in A AAAA CNAME MX TXT; do
   OUT=$(dig +short -t $RECORD $URL | sort)
   if [ -n "$OUT" ]; then
-    OUT=$(echo -e "$OUT" | sed "s/^/- **$RECORD:** /")
+    OUT=$(echo -e "$OUT" | sed "s/^/- **$URL[$RECORD]** /")
     echo "$OUT"
   fi
 done
