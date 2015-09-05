@@ -2,11 +2,9 @@
 
 URL=$1
 
-A=$(dig +short -t A $URL)
-AAAA=$(dig +short -t AAAA $URL)
-CNAME=$(dig +short -t CNAME $URL | sort)
-MX=$(dig +short -t MX $URL | sort)
-if [ -n "$A" ]; then echo -e "- **A:** $A\n"; fi
-if [ -n "$AAAA" ]; then echo -e "- **AAAA:** $AAAA\n"; fi
-if [ -n "$CNAME" ]; then echo -e "- **CNAME:** $CNAME\n"; fi
-if [ -n "$MX" ]; then echo -e "- **MX:** $MX\n"; fi
+for RECORD in A AAAA CNAME MX TXT; do
+  OUT=$(dig +short -t $RECORD $URL | sort | sed "s/^/- /")
+  if [ -n "$OUT" ]; then
+    echo -e "**$RECORD:**\n\n$OUT\n"
+  fi
+done

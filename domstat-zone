@@ -1,7 +1,10 @@
 #!/usr/bin/env bash
 
 URL=$1
-echo -e '**NS:**\n'
-dig +short NS "$URL" | sort | sed "s/^/- /"
-echo -e '\n**SOA:** ' $(dig +short SOA "$URL")
-echo ''
+
+for RECORD in NS SOA; do
+  OUT=$(dig +short -t $RECORD $URL | sort | sed "s/^/- /")
+  if [ -n "$OUT" ]; then
+    echo -e "**$RECORD:**\n\n$OUT\n"
+  fi
+done
