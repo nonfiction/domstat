@@ -8,9 +8,6 @@ SUBDOMAINS="$@"
 echo "# $DOMAIN"
 DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
-echo -e "\n### WHOIS\n"
-$DIR/domstat-whois "$DOMAIN"
-
 echo -e "\n### DNS Records\n"
 
 echo -e "\n$DOMAIN\n"
@@ -33,3 +30,6 @@ for SUBDOMAIN in $SUBDOMAINS; do
   echo -e "\n$URL\n"
   $DIR/domstat-head "$URL"
 done
+
+echo -e "\n### WHOIS\n"
+$DIR/domstat-whois "$DOMAIN"
