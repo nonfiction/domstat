@@ -1,0 +1,78 @@
+#!/usr/bin/env bash
+
+SOURCEFILE=$(basename "$0")
+usage="$SOURCEFILE
+
+Usage: $SOURCEFILE [-hv] [-d domain] DOMAINS_TO_CHECK
+
+  -h show this help text
+  -v Inverted matching
+  -d domain/IP address to resolve against (can be used multiple times)
+
+  DOMAINS_TO_CHECK can be passed as trailing command line arguments or
+  as standard input.
+
+This tool is meant to check if a domain, or list of domains, resolves to a
+particular host (CNAME) or IP address (A). Only matching domains will be printed
+unless the (-v) option is passed, in which case only non-matching domains will
+be printed.
+
+Examples:
+
+    $SOURCEFILE -d 24.244.4.49 www.google.com
+    $SOURCEFILE -v -d 1.2.3.4 www.google.com
+"
+
+# At least one argument is required
+if [[ -z "$1" ]]; then echo "$usage"; exit 0; fi
+
+#
+INVERT=''     # match inverted
+DOMAINS=''    # list of domains
+
+#
+# Start of getopts magic
+#
+OPTIND=1      # Reset in case getopts has been used previously in the shell.
+while getopts "h?d:v" opt; do
+  case "$opt" in
+  h|\?)
+    echo "$usage"
+    exit 0
+    ;;
+  d)  DOMAINS="$OPTARG $DOMAINS"
+    ;;
+  v)  INVERT=1
+    ;;
+  esac
+done
+shift $((OPTIND-1))
+# [ "$1" = "--" ] && shift
+# End of getopts magic
+
+# Main loop reads from trailing arguments OR stdin
+if [[ -n "$*" ]]; then echo "$*"; else cat -; fi | while read target; do
+
+  # Reset match to empty string
+  match=""
+
+  for domain in $DOMAINS
+  do
+    # Lookup the domain using dig +short
+    RES=$(dig +short "$target" | grep "$domain")
+    if [[ -n "$RES" ]]; then
+      match=$RES
+    fi
+  done
+
+  # If there's a match and we aren't inverted, print it
+  if [[ -n "$match" && -z "$INVERT" ]]; then
+    printf "%-40s %-20s [MATCH]\n" $target $match
+  fi
+
+  # If there isn't a match and we are inverted, print NO MATCH
+  if [[ -z "$match" && -n "$INVERT" ]]; then
+    printf "%-40s %-20s [NO MATCH]\n" $target $match
+  fi
+
+done
